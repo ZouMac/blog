@@ -1,4 +1,4 @@
-# 共享平台IDaaS项目开发心得分享
+# 浅谈 MVVM
 
 ## 主讲人
 
@@ -8,4 +8,4 @@
 
 ## 会议材料
 
-[共享平台IDaaS项目开发心得分享](/share/mvvm/浅谈mvvm.key)
+[浅谈 MVVM](/share/mvvm/mvvm.key)
