@@ -4,22 +4,8 @@
 
 - 檀邹
 
-## 参与人
 
-- 颜志炜
-- 龚道明
-- 郭孟祺
-- 郭明山
-- 黄明炜
-- 黄人煌
-- 林长杰
-- 瞿宜楚
-- 吴于凌
-- 于翔
-- 周彬
-- 郭明山
-- 郑志勇
 
 ## 会议材料
 
-[实战-屏幕录制生成Gif](/share/2017.12/screen-record-and-export-Gif/实战-屏幕录制生成Gif.pptx)
+[实战-屏幕录制生成Gif](/share/screen-record-and-export-Gif/实战-屏幕录制生成Gif.pptx)
