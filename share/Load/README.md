@@ -6,5 +6,5 @@
 
 ## 会议材料
 
-[Load 耗时检测实现](/share/load/LoadTimeCheck.md)
+[Load 耗时检测实现](/share/Load/LoadTimeCheck.md)
 
