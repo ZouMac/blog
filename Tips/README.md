@@ -78,17 +78,19 @@ dispatch_async(dispatch_get_main_queue(), block);\
 - `NSMapTableCopyIn`:  复制一份，可以设置`key`为该属性 => `NSDictionary`
 
 ​
-​
-​### 图片解压缩方案
-​
-​加载图片主要有以下三种方法：
-​
-​```objc
-​+ (nullable UIImage *)imageNamed:(NSString *)name;//同时会加载图片到内存中
-​+ (nullable UIImage *)imageWithContentsOfFile:(NSString *)path;//不会缓存到内存中，适合较大的不常用的图片
-​+ (nullable UIImage *)imageWithData:(NSData *)data;//不缓存，适合于加载网络图片
-​```
-​
+
+### 图片解压缩方案​
+
+加载图片主要有以下三种方法：
+
+```objc
+- (nullable UIImage *)imageNamed:(NSString *)name;//同时会加载图片到内存中
+
+- (nullable UIImage *)imageWithContentsOfFile:(NSString *)path;//不会缓存到内存中，适合较大的不常用的图片
+
+- (nullable UIImage *)imageWithData:(NSData *)data;//不缓存，适合于加载网络图片
+```
+
 ​**iOS加载图片流程：**
 ​
 ​当使用`imageWithContentsOfFile`从地址中获取图片时，图片并没有解压缩，此时的图片是无法显示的，在渲染到屏幕之前，必须先要得到图片的原始像素数据（位图）。
