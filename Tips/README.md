@@ -102,57 +102,58 @@ dispatch_async(dispatch_get_main_queue(), block);\
 ​
 ​在以上操作中将图片解码成位图是一个在主线程中的耗时操作，因此很有必要将它放到子线程中提前解码成位图，再在主线程中渲染图片。**而强制解压缩的原理就是对图片进行重新绘制，得到一张新的解压缩后的位图。**
 ​
-​**SDWebImage图片解压缩**
+**SDWebImage图片解压缩**
 ​
-​SDWebImage在从磁盘获取图片数据时，会根据图片是否包含Alpha通道以及是否图片存储时是否被缩小（iOS缓存操作60M的图片时，会缩小图片再进行缓存`SDImageCacheScaleDownLargeImages`）进行解压缩。
-​
-​```objc
-​- (nullable UIImage *)sd_decompressedImageWithImage:(nullable UIImage *)image {
-​if (![[self class] shouldDecodeImage:image]) {
-​return image;
-​}
-​
-​// autorelease the bitmap context and all vars to help system to free memory when there are memory warning.
-​// on iOS7, do not forget to call [[SDImageCache sharedImageCache] clearMemory];
-​@autoreleasepool{//自动释放池，释放变量
-​
-​CGImageRef imageRef = image.CGImage;
-​// device color space
-​CGColorSpaceRef colorspaceRef = SDCGColorSpaceGetDeviceRGB();//色域
-​BOOL hasAlpha = SDCGImageRefContainsAlpha(imageRef);
-​// iOS display alpha info (BRGA8888/BGRX8888)
-​CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;//kCGBitmapByteOrder32Little iPhone是小端模式，数据以32位位单位
-​//位图布局信息 有Alpha通道时，将A通道乘以RGB，无Alpha通道时，跳过
-​bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
-​
-​size_t width = CGImageGetWidth(imageRef);
-​size_t height = CGImageGetHeight(imageRef);
-​
-​// kCGImageAlphaNone is not supported in CGBitmapContextCreate.
-​// Since the original image here has no alpha info, use kCGImageAlphaNoneSkipLast
-​// to create bitmap graphics contexts without alpha info.
-​CGContextRef context = CGBitmapContextCreate(NULL,//data系统会自动分配和是否内存
-​width,//位图宽高，即像素数量
-​height,
-​kBitsPerComponent,//像素的每个颜色分量使用的 bit 数,
-​0,//位图的每一行使用的字节数=》大小至少为4 * width，指定0时系统不仅会为我们自动计算，而且还会进行 cache line alignment 的优化。优化过程不了解。。。这么用就好
-​colorspaceRef,//色域 使用RGB
-​bitmapInfo//位图布局信息);
-​if (context == NULL) {
-​return image;
-​}
-​
-​// Draw the image into the context and retrieve the new bitmap image without alpha
-​CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
-​CGImageRef imageRefWithoutAlpha = CGBitmapContextCreateImage(context);
-​UIImage *imageWithoutAlpha = [[UIImage alloc] initWithCGImage:imageRefWithoutAlpha scale:image.scale orientation:image.imageOrientation];
-​CGContextRelease(context);
-​CGImageRelease(imageRefWithoutAlpha);
-​
-​return imageWithoutAlpha;//返回生成的位图
-​}
-​}
-​```
+SDWebImage在从磁盘获取图片数据时，会根据图片是否包含Alpha通道以及是否图片存储时是否被缩小（iOS缓存操作60M的图片时，会缩小图片再进行缓存`SDImageCacheScaleDownLargeImages`）进行解压缩。
+
+```objc
+- (nullable UIImage *)sd_decompressedImageWithImage:(nullable UIImage *)image {
+    if (![[self class] shouldDecodeImage:image]) {
+        return image;
+    }
+    
+    // autorelease the bitmap context and all vars to help system to free memory when there are memory warning.
+    // on iOS7, do not forget to call [[SDImageCache sharedImageCache] clearMemory];
+    @autoreleasepool{//自动释放池，释放变量
+        
+        CGImageRef imageRef = image.CGImage;
+        // device color space
+        CGColorSpaceRef colorspaceRef = SDCGColorSpaceGetDeviceRGB();//色域
+        BOOL hasAlpha = SDCGImageRefContainsAlpha(imageRef);
+        // iOS display alpha info (BRGA8888/BGRX8888)
+        CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host;//kCGBitmapByteOrder32Little iPhone是小端模式，数据以32位位单位
+        //位图布局信息 有Alpha通道时，将A通道乘以RGB，无Alpha通道时，跳过
+        bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst;
+        
+        size_t width = CGImageGetWidth(imageRef);
+        size_t height = CGImageGetHeight(imageRef);
+        
+        // kCGImageAlphaNone is not supported in CGBitmapContextCreate.
+        // Since the original image here has no alpha info, use kCGImageAlphaNoneSkipLast
+        // to create bitmap graphics contexts without alpha info.
+        CGContextRef context = CGBitmapContextCreate(NULL,//data系统会自动分配和是否内存
+                                                     width,//位图宽高，即像素数量
+                                                     height,
+                                                     kBitsPerComponent,//像素的每个颜色分量使用的 bit 数
+                                                     0,//位图的每一行使用的字节数=》大小至少为4 * width，指定0时系统不仅会为我们自动计算，而且还会进行 cache line alignment 的优化。优化过程不了解。。。这么用就好
+                                                     colorspaceRef,//色域 使用RGB
+                                                     bitmapInfo);//位图布局信息
+        if (context == NULL) {
+            return image;
+        }
+        
+        // Draw the image into the context and retrieve the new bitmap image without alpha
+        CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+        CGImageRef imageRefWithoutAlpha = CGBitmapContextCreateImage(context);
+        UIImage *imageWithoutAlpha = [[UIImage alloc] initWithCGImage:imageRefWithoutAlpha scale:image.scale orientation:image.imageOrientation];
+        CGContextRelease(context);
+        CGImageRelease(imageRefWithoutAlpha);
+        
+        return imageWithoutAlpha;
+    }
+}
+```
+
 ​
 ​
 ​
