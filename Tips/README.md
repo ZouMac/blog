@@ -172,3 +172,213 @@ SDWebImage在从磁盘获取图片数据时，会根据图片是否包含Alpha�
 }
 ```
 
+## 2018
+
+### 在数据库中递归子节点并建立表关联实现快速检索
+
+我们在开发过程中遇到大数据检索时，如果直接对多个表数据分别进行检索将很可能会导致很严重的性能问题，导致页面卡顿。
+
+我们可以使用多张表关联的方式来优化该问题：在云办公组织组件中，由于组织树层次深、结构复杂，要计算每个初始节点包含的总人数，如果直接分别计算该节点的每个子节点的人数和，则需要执行多次的查询，势必会出现严重的性能问题。可以用表连接的方式来优化，SQLite 语句如下：
+
+
+
+```objc
+membersCount = [db intForQuery:[NSString stringWithFormat:
+    @"SELECT count(*) from tbl_persons\
+    INNER JOIN (\
+    WITH RECURSIVE\
+    cte(depId, deptName, superDeptCode) AS(\
+    SELECT depId,deptName,superDeptCode FROM tbl_deptments WHERE depId=%zd\
+    UNION ALL\
+    SELECT a.depId, a.deptName, a.superDeptCode FROM tbl_deptments AS a INNER JOIN\
+    cte ON a.superDeptCode=cte.depId\
+    )\
+    SELECT * FROM cte\
+    ) AS a ON tbl_persons.deptCode = a.depId\
+    where lState=%zd and companyId=%zd",
+    deptId, state, [[CLOfficeUser shareInstance].companyId integerValue]]];
+```
+
+其中:
+
+```objc
+WITH RECURSIVE\
+cte(depId, deptName, superDeptCode) AS(\
+SELECT depId,deptName,superDeptCode FROM tbl_deptments WHERE depId=%zd\
+UNION ALL\
+SELECT a.depId, a.deptName, a.superDeptCode FROM tbl_deptments AS a INNER JOIN\
+cte ON a.superDeptCode=cte.depId\
+)\
+SELECT * FROM cte\
+```
+
+表示对部门表`tbl_deptments`进行递归查询`superDeptCode`节点下的所有子节点`depId`。
+
+`INNER JOIN` 表示将关联两张表进行查询。
+
+
+
+### 使用宏判断输入的路径参数是否合法，并且给出代码提示
+
+在使用 KVO 时，通常要指定一个观察路径`keyPath`,如果该路径字符串拼错或是不存在，编译时并不会报错，只有等到运行时才会发现问题。Facebook开源的`FBKVOController`通过宏定义来解决了这个问题：
+
+```objc
+#define keypath(self, path)   \
+(((void)(NO && ((void)self.path, NO)), strchr(# PATH, '.') + 1))
+```
+
+其中`(((void)(NO && ((void)self.path, NO)), strchr(# PATH, '.') + 1))`是一个逗号表达式，只会计算逗号后面的部分`strchr(# PATH, '.') + 1`，由于前面部分没有使用，编译器会报警告，因此加上`(void)`强制转换类型。
+
+`(NO && ((void)self.path, NO))`NO与运算，直接跳过忽略第一个值，去计算表达式后面的值，且这里使用`(void)self.path`对`path`进行点运算，只要作为表达式的一部分，Xcode会自动提示。
+
+如果传入的`path`不是`self`的属性，那么`self.path`就不是一个合法的表达式，所以自然编译就不会通过了。
+
+使用：
+
+```objc
+@keypath(self.personA);//返回@"personA"
+```
+
+`keypath(self, path)`返回的是C字符串，前面加@可转为OC对象`NSString`。
+
+
+
+### NS_ENUM 与 NS_OPTIONS
+
+使用 `NS_ENUM` 与 `NS_OPTIONS` 宏来定义枚举类型可以指明底层的数据类型。
+
+使用:
+
+```objc
+typedef NS_OPTIONS(NSUInteger, UISwipeGestureRecognizerDirection) {
+    UISwipeGestureRecognizerDirectionNone = 0,  // 值为0
+    UISwipeGestureRecognizerDirectionRight = 1 << 0,  // 值为2的0次方 即左移一位
+    UISwipeGestureRecognizerDirectionLeft = 1 << 1,  // 值为2的1次方
+    UISwipeGestureRecognizerDirectionUp = 1 << 2,  // 值为2的2次方
+    UISwipeGestureRecognizerDirectionDown = 1 << 3  // 值为2的3次方
+};
+
+typedef NS_ENUM(NSInteger, NSWritingDirection) {
+    NSWritingDirectionNatural = 0,  // 值为0    
+    NSWritingDirectionLeftToRight,  // 值为1
+    NSWritingDirectionRightToLeft  // 值为2       
+};
+```
+
+区别:
+
+* `NS_ENUM` 枚举项的值为 `NSInteger`，`NS_OPTIONS` 枚举项的值为 `NSUInteger`
+
+* `NS_ENUM` 定义通用枚举（默认自增步长为 1），`NS_OPTIONS` 定义位移枚举(可以同时存在多个)
+
+* `NS_OPTIONS`的枚举项的值一般使用位运算符定义：`1 << 0，1 << 1`，而 `NS_ENUM` 的值一般直接使用数值：0 1 2
+
+在使用或运算操作两个枚举值时，C++ 默认为运算结果的数据类型是枚举的底层数据类型`(NSUInteger)`,且 C++ 不允许它隐式转换为枚举类型本身，所以 C++ 模式下定义了 `NS_OPTIONS` 宏以保证不会出现类型转换。因此如果OC不按 C++ 模式编译，两者展开方式相同。如果按照 C++ 模式编译, 则存在区别。
+
+结论：只要枚举值需要按位或（2个及以上枚举值可多个存在）就使用 `NS_OPTIONS`，否则使用 `NS_ENUM`。
+
+
+
+### UIControl拖拽移出控件问题
+
+我们要自定义控件的互动效果时需要使用 `UIControl`，但是在使用时发现，离开控件时并不会触发 `UIControlEventTouchDragExit` 和 `UIControlEventTouchDragOutside`，实践后发现，离开控件边缘100px时，才会触发该事件。
+
+我们可以使用以下代码来取消这个效果。
+
+```objc
+- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
+    // 设置新的边界
+    CGFloat boundsExtension = 0.0f;
+    CGRect outerBounds = CGRectInset(self.bounds, -1 * boundsExtension, -1 * boundsExtension);
+    // 判断触摸位置
+    BOOL touchOutside = !CGRectContainsPoint(outerBounds, [touch locationInView:self]);
+    if(touchOutside)
+    {
+        // 判断是UIControlEventTouchDragExit/UIControlEventTouchDragOutside
+        BOOL previousTouchInside = CGRectContainsPoint(outerBounds, [touch previousLocationInView:self]);
+        if(previousTouchInside)
+        {
+            [self sendActionsForControlEvents:UIControlEventTouchDragExit];
+        }
+        else
+        {
+            [self sendActionsForControlEvents:UIControlEventTouchDragOutside];
+        }
+    } else {
+        [self sendActionsForControlEvents:UIControlEventTouchDown];
+    }
+    // 如果不是想要修改的control event，返回原操作
+    return [super continueTrackingWithTouch:touch withEvent:event];
+}
+
+```
+
+
+
+### 判断两张UIImage全等
+
+判断两张图片全像素相等，网络上提供的方法大多如下：
+
+```objc
+BOOL isImageEqual(UIImage *image1, UIImage *image2) {
+     if (image1 && image2) {
+         NSData *data1 = UIImagePNGRepresentation(image1);
+         NSData *data2 = UIImagePNGRepresentation(image2);
+         BOOL result = [data1 isEqual:data2];
+         return result;
+     }
+     return NO;
+ }
+
+```
+
+该方法主要实现思路：采用 `UIImagePNGRepresentation` 将 `UIImage` 转化 `NSData` 之后进行比较。因为：`UIImage` 显示的图片为 BMP 类型图片。它采用位映射存储格式，除了图像深度可选以外，不采用其他任何压缩，因此，BMP 图像所占用的空间很大。而 `UIImagePNGRepresentation` 会将 BMP 转化为 PNG ,其过程是是无损数据压缩的，但经过压缩转化后可能存在相同图片压缩结果不同的情况。
+
+所以以上的判断方法存在三个问题：
+
+- 没有判断两张图片来源是否相同，从资源文件中读出的同一张图片组成不同的 `UIImage` 对象，其指针是相同的，`UIImage` 只是引用，可能产生图片和自身比较的过程。
+- 把 `UIImage` 转成 `NSData` 的过程非常耗时。
+- 同一张图片的压缩结果可能存在不同。
+
+由于 `UIImage` 使用的图片已经是 BMP 类型的图片，所以只要获取到图片每个像素对应的存储数据进行对比，即可不经过压缩、对比结果绝对精确等。
+具体代码如下：
+
+```objc
+BOOL isImageEqual(UIImage *image1, UIImage *image2) {
+    if (image1 == image2) {
+        return YES;
+    }
+    if (!CGSizeEqualToSize(image1.size, image2.size)) {
+        return NO;
+    }
+    if (image1 && image2) {
+        CGImageRef imageRef1 = [image1 CGImage];
+        //获取图片像素映射信息
+        CFDataRef data1 = CGDataProviderCopyData(CGImageGetDataProvider(imageRef1));
+        const unsigned char * buffer1 =  CFDataGetBytePtr(data1);
+        CFIndex length1 = CFDataGetLength(data1);
+
+        CGImageRef imageRef2 = [image2 CGImage];
+        CFDataRef data2 = CGDataProviderCopyData(CGImageGetDataProvider(imageRef2));
+        const unsigned char * buffer2 =  CFDataGetBytePtr(data2);
+        CFIndex length2 = CFDataGetLength(data2);
+
+        if (length1 != length2) {
+            return NO;
+        }
+        BOOL result = YES;
+        for (long i = 0; i<length1; i++) {
+            if(*(buffer1+i) != *(buffer2+i)){
+                result = NO;
+                break;
+            }
+        }
+        //autoRelease...CG CF object
+        return result;
+    }
+    return NO;
+ }
+
+```
+
+经过测试，最差情况下，性能是原方案的4-10倍。
