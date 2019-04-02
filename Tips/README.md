@@ -283,6 +283,8 @@ typedef NS_ENUM(NSInteger, NSWritingDirection) {
 
 我们要自定义控件的互动效果时需要使用 `UIControl`，但是在使用时发现，离开控件时并不会触发 `UIControlEventTouchDragExit` 和 `UIControlEventTouchDragOutside`，实践后发现，离开控件边缘100px时，才会触发该事件。
 
+![image-20190402150100261](images/image-UIControl.png)
+
 我们可以使用以下代码来取消这个效果。
 
 ```objc
