@@ -5,6 +5,22 @@
 
 
 
+## 2019.04
+
+### po的完整版
+
+```objc
+expr   变量|表达式              //显示变量或者表达式的值。
+expr -f h --  变量|表达式       //以16进制格式显示变量或表达式的内容
+expr -f b --  变量|表达式       //以二进制格式显示变量或者表达式的内容。
+expr -o --  oc对象             //等价于po  oc对象
+expr -P  3 -- oc对象           //上面命令的加强版本，他还会显示出对象内数据成员的结构，具体的P后面的数字就是你要想显示的层次。
+expr my_struct->a = my_array[3]    //给my_struct的a成员赋值。
+expr (char*)_cmd               //显示某个oc方法的方法名。
+expr (IMP)[self methodForSelector:_cmd]    //执行某个方法调用.
+```
+
+真机使用的架构是[arm64指令集](https://blog.csdn.net/zqixiao_09/article/details/50726544)，模拟器使用的是x64指令集。可进入汇编调试模式调试。
 
 ## 2019.3
 
