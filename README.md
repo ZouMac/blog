@@ -4,7 +4,7 @@
 
 ### [开发中遇到的问题](Tips/README.md)
 
-
+### [设计模式总结ing](Tips/developMode.md)
 
 
 

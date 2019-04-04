@@ -5,7 +5,11 @@
 
 
 
-## 2019.04
+[TOC]
+
+
+
+## 2019
 
 ### po的完整版
 
@@ -22,7 +26,7 @@ expr (IMP)[self methodForSelector:_cmd]    //执行某个方法调用.
 
 真机使用的架构是[arm64指令集](https://blog.csdn.net/zqixiao_09/article/details/50726544)，模拟器使用的是x64指令集。可进入汇编调试模式调试。
 
-## 2019.3
+
 
 ### 微信小程序camera组件录像30s偶发超时问题
 
@@ -384,3 +388,141 @@ BOOL isImageEqual(UIImage *image1, UIImage *image2) {
 ```
 
 经过测试，最差情况下，性能是原方案的4-10倍。
+
+
+
+### 继承和面向接口编程
+
+- https://mp.weixin.qq.com/s/dBKemsm9knwJ8tR7fbfX8Q
+
+### 继承
+
+- 优点：代码复用
+
+- 缺点：高耦合
+
+- 使用原则：
+
+  1、父类只给子类提供服务，只做自己的事情，不涉及子类的业务逻辑。不同的业务逻辑由子类自己完成。父类子类互补影响。
+
+  2、父类的变化要在子类中有所体现，将高耦合作为一种需求。
+
+- 替代方案 - 协议
+
+- 替换方案- 组合
+
+- 替换方案- 扩展
+
+- 替换方案- 配置对象
+
+
+### 面向切面AOP
+
+使用method swizzling来替换继承。 使用需要的方法替换原生的生命周期方法。实现所有类都可以执行该方法。（类似子类执行父类方法）
+
+- load：main函数之前执行，只要存在类即可执行。
+- initialize：类的第一个方法被调用之前调用，没有使用的类，不会被调用。
+
+
+
+### 面向接口
+
+通过接口的定义，调用者可以忽略对象的属性，聚焦于其提供的接口和功能上。程序猿在首次接触陌生的某个对象时，接口往往比属性更加直观明了，抽象接口往往比定义属性更能描述想做的事情。
+
+
+
+### 多态和面向接口
+
+- 继承问题
+
+  父类中会有空的方法，对父类没有任何意义
+
+  架构师写父类，业务工程师写子类，不清楚哪些需要需要覆盖重载，容易出错。
+
+- 面向接口=>面向协议
+
+  OC不支持多重继承
+
+  也没有Interface关键字作为接口实现（Interf只作为类的声明使用）
+
+  通过抽象基类和协议来实现接口：基类定义协议（代理)，在子类中具体实现。
+
+
+
+### 面向接口实现顺序控制 
+
+- 函数式编程
+
+  OC主要接祖block实现，将block作为“函数”传递给调用。
+
+- 链式编程
+
+  将方法返回值作为参数，继续调用方法（masonry）
+
+- 利用协议实现顺序控制
+
+
+
+### build setting优化
+
+**Architectures**
+
+- Build Active Architecture only：设置是否之编译当前所使用设备对应的arm指令集，debug设为YEs，release设为NO。
+- Valid Architectures：项目所支持的arm指令集，支持的越多二进制包越大。
+
+
+
+**Optimization**
+
+- Link-Time Optimization：是 LLVM 编译器的一个特性，用于在 link 中间代码时，对全局代码进行优化。这个优化是自动完成的，因此不需要修改现有的代码；这个优化也是高效的，因为可以在全局视角下优化代码。**开启LTO后，一方面可以减少汇编代码的体积，另一方面也提高了代码的运行效率，建议开启Incremental。**
+
+  这里在开启Incremental后有可能会出现duplicate symbols for architecture x86_64的错误，这可能是由于你的代码不规范导致的，全局变量在定义时，.h文件中只能声明变量，而不应该定义变量。在.m中定义全局变量的时候也应该增加命名空间或者使用static关键字避免命名冲突。
+
+- Optimization Level：编译器的优化层度，优化后的代码效率比较高，但是可读性比较差，且编译时间更长。 它一共有以下几个选项:
+
+  - None: 编译器不会尝试优化代码，当你专注解决逻辑错误、编译速度快时使用此项。=》debug
+  - Fast: 编译器执行简单的优化来提高代码的性能，同时最大限度的减少编译时间，该选项在编译过程中会使用更多的内存。
+  - Faster: 编译器执行所有优化，增加编译时间，提高代码的性能。
+  - Fastest: 编译器执行所有优化，改善代码的速度，但会增加代码长度，编译速度慢。
+  - Fastest, Smallest: 编译器执行所有优化，不会增加代码的长度，它是执行文件占用更少内存的首选方案=》release
+
+- Optimization ：time存储速度最优，优化时间。space优化编译包大小
+
+**Debug information Format**
+
+- 是否将调试信息加入到可执行文件中
+- DWARF：debug
+- DWARF with dSYM file：release
+
+**Deployment PostProcessing and Strip Linked Product**
+
+- Deployment PostProcessing：总开关
+- Strip Linked Product：优化包大小和编译速度。**当Strip Linked Product设为YES的时候，运行app，断点不会中断，在程序中打印[NSThread callStackSymbols]也无法看到类名和方法名。而在程序崩溃时，函数调用栈中也无法看到类名和方法名。所以一般在release的时候打开就可以了。**
+
+
+
+### gem安装的坑
+
+指定gem版本 ：`gem update --system "需要的版本"`
+
+切换ruby：
+
+```
+rvm list
+
+rvm current
+
+rvm --default use 2.2.2
+```
+
+安装指定cocoapods：`gem install cocoapods --version 1.5.0`
+
+安装指定ruby：
+
+```
+rvm list known
+rvm install ruby-2.2.2
+```
+
+
+
