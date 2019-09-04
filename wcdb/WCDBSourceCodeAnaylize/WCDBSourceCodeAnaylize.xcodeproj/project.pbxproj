@@ -297,7 +297,7 @@
 			baseConfigurationReference = 5C663C6AE3C9A0B8D308330C /* Pods-WCDBSourceCodeAnaylize.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RRZJ867LSA;
+				DEVELOPMENT_TEAM = LJ786Y9SWT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -307,7 +307,7 @@
 			baseConfigurationReference = 92C38AE7BAE2EE1FAFC5BDFA /* Pods-WCDBSourceCodeAnaylize.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RRZJ867LSA;
+				DEVELOPMENT_TEAM = LJ786Y9SWT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
