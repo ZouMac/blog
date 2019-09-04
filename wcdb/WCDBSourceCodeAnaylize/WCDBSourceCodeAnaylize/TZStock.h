@@ -13,21 +13,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface TZStock : NSObject<WCTTableCoding>
 
-//@property (nonatomic, copy) NSString *name;
+//@property (nonatomic, retain) NSString *name;
 //
 //@property (nonatomic, assign) int code;
 //
-//@property (nonatomic, strong) NSData *data;
+//@property (nonatomic, retain) NSDate *date;
 
 
-@property (nonatomic) int code;
+@property (assign) int code;
 @property(retain) NSString *name;
 @property(retain) NSDate *date;
-//@property(assign) int code;
-
-WCDB_PROPERTY(code);
-WCDB_PROPERTY(name);
-WCDB_PROPERTY(date);
+////@property(assign) int code;
+//
++ (const WCTProperty &) code;
++ (const WCTProperty &) name;
++ (const WCTProperty &) date;
+//WCDB_PROPERTY(code);
+//WCDB_PROPERTY(name);
+//WCDB_PROPERTY(date);
 
 @end
 

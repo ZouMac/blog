@@ -30,12 +30,6 @@ ORM是将一个对象的类与表和索引关联起来，同时将类的属性�
 ```objc
 @interface TZStock : NSObject<WCTTableCoding>
 
-//@property (nonatomic, copy) NSString *name;
-//
-//@property (nonatomic, assign) int code;
-//
-//@property (nonatomic, strong) NSData *data;
-
 @property(retain) NSString *name;
 @property(retain) NSDate *date;
 @property(assign) int code;

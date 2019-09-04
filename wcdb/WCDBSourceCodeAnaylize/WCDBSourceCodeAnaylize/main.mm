@@ -26,17 +26,17 @@ int main(int argc, const char * argv[]) {
                 stock.date = [NSDate dateWithTimeIntervalSinceNow:111];
                 [dataBase insertObject:stock into:@"stock"];
             }];
-            
-            
+
+
             [dataBase deleteObjectsFromTable:@"stock" where:TZStock.code == 777];
-            
+
             TZStock *editStock = [[TZStock alloc] init];
             editStock.code = 888;
             [dataBase updateRowsInTable:@"stock" onProperty:TZStock.code withObject:editStock limit:nil];
-            
+
             NSArray <TZStock *> *searchStocks = [dataBase getObjectsOfClass:TZStock.class fromTable:@"stock" orderBy:TZStock.code.order()];
             NSLog(@"finish");
-            
+        
         }
     }
     return 0;

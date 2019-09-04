@@ -8,46 +8,53 @@
 
 #import "TZStock.h"
 
-//#define __WCDB_PROPERTY_TYPE(className, propertyName)   decltype([className new].propertyName)
-//#define kTEST(className, propertyName) decltype([className new].propertyName)
 
 @implementation TZStock
 
-WCDB_IMPLEMENTATION(TZStock);
 
-//WCDB_SYNTHESIZE(TZStock, code);
-//WCDB_SYNTHESIZE(TZStock, name);
-//WCDB_SYNTHESIZE(TZStock, date);
+//WCDB_IMPLEMENTATION(TZStock);
 
+
+static WCTBinding _s_TZStock_binding(TZStock.class);
+static WCTPropertyList _s_TZStock_properties;
+
++ (const WCTBinding *) objectRelationalMappingForWCDB {
+    if (self.class != TZStock.class) {
+        WCDB::Error::Abort("Inheritance is not supported for ORM");
+    }
+    return &_s_TZStock_binding;
+}
+
++ (const WCTPropertyList &) AllProperties {
+    return _s_TZStock_properties;
+}
+
++ (const WCTAnyProperty &) AnyProperty {
+    static const WCTAnyProperty s_anyProperty(TZStock.class);
+    return s_anyProperty;
+}
+
++(WCTPropertyNamed) PropertyNamed {
+    return WCTProperty::PropertyNamed;
+}
+
+//WCTProperty(const char *name,
+//            Class cls,
+//            const std::shared_ptr<WCTColumnBinding> &columnBinding);
 
 + (const WCTProperty &)code {
-    _s_TZStock_binding;
-    _s_TZStock_binding.addColumnBinding<decltype([TZStock new].code)>("code", "code");
     static const WCTProperty s_property("code", TZStock.class, _s_TZStock_binding.addColumnBinding<decltype([TZStock new].code)>("code", "code"));
     return s_property;
 }
 
-//#define WCDB_IMPLEMENTATION(className)
-//static WCTBinding __WCDB_BINDING(className)(className.class);
-//static WCTPropertyList __WCDB_PROPERTIES(className);
-//+(const WCTBinding *) objectRelationalMappingForWCDB
-//{
-//if (self.class != className.class) {
-//WCDB::Error::Abort("Inheritance is not supported for ORM");
-//}
-//return &__WCDB_BINDING(className);
-//}
+static const auto UNUSED_UNIQUE_ID = [](WCTPropertyList &propertyList) { // lambda表达式匿名函数
+    propertyList.push_back(TZStock.code);
+    return nullptr;
+}(_s_TZStock_properties); // 将TZStock.code塞到propertyList（_s_TZStock_properties）中
 
-//+(const WCTPropertyList &) AllProperties
-//{
-//return __WCDB_PROPERTIES(className);
-//}
-//+(const WCTAnyProperty &) AnyProperty
-//{
-//static const WCTAnyProperty s_anyProperty(className.class);
-//return s_anyProperty;
-//}
-//+(WCTPropertyNamed) PropertyNamed { return WCTProperty::PropertyNamed; }
 
+//WCDB_SYNTHESIZE(TZStock, code);
+WCDB_SYNTHESIZE(TZStock, name);
+WCDB_SYNTHESIZE(TZStock, date);
 
 @end

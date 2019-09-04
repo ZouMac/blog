@@ -6,38 +6,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Pods/WCDB/objc/WCDB/interface/table/WCTInterface+Table.mm"
-            timestampString = "588566158.862097"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
-            landmarkName = "-createTableAndIndexesOfName:withClass:andError:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Pods/WCDB/objc/WCDB/interface/table/WCTInterface+Table.mm"
-            timestampString = "588566232.16567"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
-            landmarkName = "-createTableAndIndexesOfName:withClass:andError:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -48,22 +16,6 @@
             startingLineNumber = "105"
             endingLineNumber = "105"
             landmarkName = "Transaction::runEmbeddedTransaction(TransactionBlock transaction, WCDB::Error &amp;error)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Pods/WCDB/objc/WCDB/core/database_transaction.cpp"
-            timestampString = "588571343.004815"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "Database::runEmbeddedTransaction(TransactionBlock transaction, Error &amp;error)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,13 +41,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "WCDBSourceCodeAnaylize/TZStock.mm"
-            timestampString = "588654911.907234"
+            filePath = "Pods/WCDB/objc/WCDB/interface/orm/binding/WCTBinding.h"
+            timestampString = "589275768.556537"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "+code"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "addColumnBinding(const std::string &amp;propertyName, const std::string &amp;columnName)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -105,13 +57,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "WCDBSourceCodeAnaylize/TZStock.mm"
-            timestampString = "588654911.907457"
+            filePath = "Pods/WCDB/objc/WCDB/interface/orm/binding/WCTBinding.h"
+            timestampString = "589275768.556585"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "+code"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "addColumnBinding(const std::string &amp;propertyName, const std::string &amp;columnName)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pods/WCDB/objc/WCDB/interface/table/WCTInterface+Table.mm"
+            timestampString = "589280962.635482"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "-createTableAndIndexesOfName:withClass:andError:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
