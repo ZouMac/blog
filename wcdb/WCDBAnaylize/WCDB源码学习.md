@@ -14,7 +14,7 @@ WCDB优势：
 
 ORM是将一个对象的类与表和索引关联起来，同时将类的属性映射到数据库表的字段中。通过WCDB可以省去手写拼装类中属性与表字段关联的代码。
 
-![image-20190905002832848](/Users/zoutan/Library/Application Support/typora-user-images/image-20190905002832848.png)
+![ORMImage](images/ORM.png)
 
 - **WCTColumnBinding：定义了类属性与字段之间的联系，支持自定义字段名和默认值**
 - WCTIndexBinding：定义了数据库的索引属性，支持定义索引的排序方式
@@ -386,7 +386,7 @@ static const auto _unused0 = [](WCTPropertyList &propertyList) {
 
 调用栈：
 
-![image-20190905021257199](/Users/zoutan/Library/Application Support/typora-user-images/image-20190905021257199.png)
+![imageStack](images/funcStack.png)
 
 插入时调用，主要遍历要插入的对象及对象属性，依次插入：
 
@@ -458,7 +458,7 @@ case WCTAccessorObjC: {
 
 执行插入SQL：
 
-![image-20190905024745639](/Users/zoutan/Library/Application Support/typora-user-images/image-20190905024745639.png)
+![image-20190905024745639](images/zSql.png)
 
 
 
